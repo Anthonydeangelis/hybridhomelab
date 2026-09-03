@@ -1,0 +1,16 @@
+# Secrets and local configuration
+*.tfvars
+*.tfstate
+*.tfstate.*
+*.secret.*
+.env
+.terraform/
+.terraform.lock.hcl
+
+# Editor and operating-system files
+.DS_Store
+.vscode/
+ModuleAnalysisCache-*
+
+# Evidence must be reviewed and redacted before adding
+evidence/private/

@@ -1,0 +1,30 @@
+# Copy to ignored terraform.tfvars and replace all placeholders.
+subscription_id      = "00000000-0000-0000-0000-000000000000"
+location             = "eastus"
+project_name         = "hybridlab"
+environment          = "lab"
+admin_cidr           = "203.0.113.8/32"
+ssh_public_key       = "ssh-ed25519 AAAA... replace-with-your-public-key"
+
+# Globally unique names for resources Terraform creates during the first apply.
+storage_account_name = "hybridlabstorage1234"
+key_vault_name       = "hybridlab-kv-1234"
+
+
+proxmox_endpoint    = "https://192.168.1.50:8006/api2/json"
+proxmox_api_token   = "terraform@pve!homelab=REPLACE_WITH_TOKEN_SECRET"
+proxmox_insecure    = true
+node_name           = "pve"
+datastore_id        = "local-lvm"
+bridge              = "vmbr0"
+windows_template_id = 9001
+ubuntu_template_id  = 9000
+linux_username      = "labadmin"
+ssh_public_key      = "ssh-ed25519 AAAA...replace-with-your-public-key"
+
+# Check that these VM IDs are unused before applying.
+fs01_vmid = 201
+ubuntu_servers = {
+  WEB01   = { vmid = 202, cores = 2, memory_mb = 2048 }
+  WAZUH01 = { vmid = 203, cores = 2, memory_mb = 4096 }
+}

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1120" viewBox="0 0 1600 1120" role="img" aria-labelledby="title description">
+  <title id="title">Hybrid Enterprise Homelab Architecture</title>
+  <desc id="description">Proxmox hosts identity, application, monitoring, and controlled-test VMs. A dedicated sync server connects selected lab identities to Microsoft Entra ID, while a private connector publishes WEB01 through Entra Application Proxy. Azure hosts an independent Terraform-managed web workload with HTTPS and Key Vault-backed administrator access, without a VPN or Active Directory replication path.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071421"/><stop offset="1" stop-color="#12365b"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="7" stdDeviation="8" flood-color="#00101b" flood-opacity=".35"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#64d5ff"/></marker>
+    <style>
+      .title{font:700 36px Arial,sans-serif;fill:#f7fbff}.subtitle{font:400 18px Arial,sans-serif;fill:#c4dcf1}.heading{font:700 21px Arial,sans-serif;fill:#102b45}.label{font:700 17px Arial,sans-serif;fill:#153754}.detail{font:400 14px Arial,sans-serif;fill:#385b78}.small{font:400 13px Arial,sans-serif;fill:#d4e7f7}.warn{font:600 14px Arial,sans-serif;fill:#7b4200}.arrow{stroke:#64d5ff;stroke-width:4;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="1120" fill="url(#background)"/>
+  <text x="70" y="70" class="title">Hybrid Enterprise Homelab</text>
+  <text x="70" y="104" class="subtitle">Active Directory • Entra Connect + App Proxy • Local services • Azure IaC • Monitoring</text>
+  <rect x="55" y="145" width="960" height="860" rx="25" fill="#e9f5ff" filter="url(#shadow)"/>
+  <text x="90" y="195" class="heading">Proxmox homelab • private network</text>
+  <rect x="88" y="225" width="894" height="730" rx="18" fill="#d3ebff" stroke="#9dc7e5" stroke-width="2"/>
+  <text x="120" y="268" class="heading">Identity &amp; administration</text>
+  <g filter="url(#shadow)"><rect x="120" y="290" width="190" height="150" rx="15" fill="#fff"/><rect x="340" y="290" width="190" height="150" rx="15" fill="#fff"/><rect x="560" y="290" width="190" height="150" rx="15" fill="#fff"/></g>
+  <text x="145" y="330" class="label">DC01</text><text x="145" y="358" class="detail">AD DS + DNS</text><text x="145" y="384" class="detail">corp.local</text>
+  <text x="365" y="330" class="label">SYNC01</text><text x="365" y="358" class="detail">Entra Connect Sync</text><text x="365" y="384" class="detail">Selected lab OUs</text>
+  <text x="585" y="330" class="label">ADMIN01</text><text x="585" y="358" class="detail">Domain joined</text><text x="585" y="384" class="detail">RSAT management</text>
+  <path d="M310 365 H340" class="arrow"/><path d="M310 410 C420 500,535 500,560 410" class="arrow"/>
+  <text x="120" y="500" class="heading">Member services</text>
+  <g filter="url(#shadow)"><rect x="120" y="520" width="190" height="150" rx="15" fill="#fff"/><rect x="340" y="520" width="190" height="150" rx="15" fill="#fff"/><rect x="780" y="520" width="170" height="150" rx="15" fill="#fff"/></g>
+  <text x="145" y="560" class="label">FS01</text><text x="145" y="588" class="detail">SMB file shares</text><text x="145" y="614" class="detail">AGDLP / NTFS</text>
+  <text x="365" y="560" class="label">WEB01</text><text x="365" y="588" class="detail">Nginx web application</text><text x="365" y="614" class="detail">Private via App Proxy</text>
+  <text x="800" y="560" class="label">Private Connector</text><text x="800" y="588" class="detail">App Proxy service</text><text x="800" y="614" class="detail">Outbound only</text>
+  <path d="M780 600 H530" class="arrow"/><path d="M950 600 C1035 600,1025 400,1070 400" class="arrow"/><text x="765" y="485" class="detail">Outbound Application Proxy connection</text>
+  <text x="120" y="730" class="heading">Monitoring &amp; controlled validation</text>
+  <g filter="url(#shadow)"><rect x="120" y="750" width="260" height="150" rx="15" fill="#effff4"/><rect x="420" y="750" width="260" height="150" rx="15" fill="#fff3df"/></g>
+  <text x="145" y="790" class="label">WAZUH01</text><text x="145" y="818" class="detail">Private SIEM manager</text><text x="145" y="844" class="detail">Local endpoint agents</text>
+  <text x="445" y="790" class="label">KALI01</text><text x="445" y="818" class="detail">Authorized lab testing</text><text x="445" y="844" class="detail">Isolation required first</text>
+  <path d="M310 600 C360 720,260 720,250 750" class="arrow"/>
+  <rect x="1070" y="180" width="470" height="270" rx="25" fill="#edfbf2" filter="url(#shadow)"/>
+  <text x="1110" y="230" class="heading">Microsoft Entra ID</text><text x="1110" y="275" class="label">Existing tenant</text><text x="1110" y="306" class="detail">Selected lab users and groups</text><text x="1110" y="336" class="detail">Password hash synchronization</text><text x="1110" y="366" class="detail">Application Proxy + MFA</text>
+  <path d="M530 365 C760 365,865 315,1070 315" class="arrow"/><text x="785" y="286" class="small">Outbound Entra Connect Sync</text>
+  <rect x="1070" y="550" width="470" height="330" rx="25" fill="#f2f7ff" filter="url(#shadow)"/>
+  <text x="1110" y="600" class="heading">Azure • Terraform managed</text>
+  <g filter="url(#shadow)"><rect x="1110" y="630" width="180" height="170" rx="15" fill="#fff"/><rect x="1320" y="630" width="180" height="170" rx="15" fill="#fff"/></g>
+  <text x="1135" y="672" class="label">Azure Web VM</text><text x="1135" y="700" class="detail">Ubuntu + Nginx</text><text x="1135" y="726" class="detail">HTTPS public</text><text x="1135" y="752" class="detail">Admin hash: Key Vault</text>
+  <text x="1345" y="672" class="label">Data services</text><text x="1345" y="700" class="detail">Storage Account</text><text x="1345" y="726" class="detail">Key Vault</text>
+  <path d="M1320 735 H1290" class="arrow"/>
+  <rect x="1095" y="905" width="420" height="60" rx="12" fill="#fff0d8"/><text x="1120" y="942" class="warn">No VPN • no Azure DC/RODC • no AD replication path</text>
+  <rect x="55" y="1040" width="1485" height="42" rx="12" fill="#163c60"/><text x="80" y="1067" class="small">Publish only redacted evidence. Keep credentials, tenant IDs, private keys, state files, and home-network details out of GitHub.</text>
+</svg>
