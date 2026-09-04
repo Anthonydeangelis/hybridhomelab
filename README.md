@@ -147,7 +147,7 @@ After authentication, the external Application Proxy URL served the WEB01 applic
 
 ![Successful remote WEB01 access](evidence/app-proxy/02-web01-remote-access-success.png)
 
-A separate attempted sign-in to the Web01 Internal Web App was rejected before application access.
+A separate attempted sign-in with a user that is not in the assigned group to the Web01 Internal Web App was rejected before application access.
 
 ![Rejected WEB01 sign-in](evidence/app-proxy/03-web01-access-denied.png)
 
@@ -200,7 +200,7 @@ One troubleshooting lesson was especially useful: Wazuh dashboard alerts show fi
 
 ### 9. Azure infrastructure as code and protected web administration
 
-I deployed a standalone Azure workload with a resource group, VNet, subnet, NSG, public IP, Ubuntu web VM, Storage Account, and Key Vault. It is intentionally separate from the private Proxmox lab: there is no Azure domain controller, RODC, VPN, or route to the home network.
+I deployed a standalone Azure workload with a resource group, VNet, subnet, NSG, public IP, Ubuntu web VM, Storage Account, and Key Vault. It is intentionally separate from the private Proxmox lab.
 
 The Azure web VM is available at `https://hybridhomelabweb.eastus2.cloudapp.azure.com`. Nginx uses a Let's Encrypt certificate and redirects HTTP to HTTPS. Its `/admin/` page is protected with Nginx Basic Authentication using a bcrypt hash manually retrieved from Azure Key Vault by the VM's system-assigned managed identity.
 
