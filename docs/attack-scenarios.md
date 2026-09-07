@@ -15,6 +15,10 @@ These exercises are for the owner's isolated homelab only. Do not run them again
 
 Do not use `KALI01` against public systems, school systems, work systems, shared home devices, or any target that is not explicitly part of this lab.
 
+## Completed validation: FS01 SMB failed-logon correlation
+
+The first completed Kali exercise is documented in the [KALI01 validation runbook](kali-validation-runbook.md). `KALI01` is isolated on an internal-only Proxmox bridge and can reach only the second `FS01` adapter over SMB. Five disposable `AttackLab` identities receive one deliberately incorrect SMB password attempt each. Wazuh records the underlying Windows Event ID `4625` events and correlates the threshold with custom rule `100120`.
+
 ## Evidence-focused scenarios
 
 | Scenario | Objective | Expected evidence |

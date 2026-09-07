@@ -12,6 +12,7 @@ evidence/
   conditional-access/
   web01/
   wazuh/
+  kali/
   azure/
 ```
 
@@ -46,4 +47,4 @@ Cleanup:
 | Wazuh | Published | Additional per-rule detail evidence, if captured later |
 | FS01 | Wazuh failed-logon alert published | Share, ACL, and authorized/denied SMB access evidence, if captured later |
 | Azure Terraform and web administration | Published | Terraform apply, resources, HTTPS, Key Vault role and secret, Key Vault-read validation, and protected `/admin/` access |
-| KALI01 validation | Upcoming | Isolation, approved scope, safe test result, alert/log, and cleanup proof |
+| KALI01 validation | Published | `AttackLab` account inventory and the FS01 Event ID 4625 / Wazuh rule 100120 correlation alert |

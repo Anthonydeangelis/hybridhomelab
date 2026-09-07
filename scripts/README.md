@@ -11,6 +11,7 @@ Scripts are starting points for the lab, not unattended production automation. R
 | `file-server-setup.ps1` | Create SMB shares and apply AGDLP-based NTFS permissions |
 | `wazuh-server-setup.sh` | Install Wazuh all-in-one on `WAZUH01` using the official installation assistant |
 | `wazuh-agent-install.sh` | Install a Wazuh agent using a supplied manager address |
+| `kali-attacklab-accounts.ps1` | One-time creation of the unprivileged `AttackLab` OU and five disposable FS01 authentication-test accounts |
 
 ## VM setup map
 
@@ -22,7 +23,7 @@ Scripts are starting points for the lab, not unattended production automation. R
 | `FS01` | Provision from a clean Windows Server template, join the domain, then run `file-server-setup.ps1` |
 | `WEB01` | Provision from the Ubuntu template, then configure the internal Nginx application |
 | `WAZUH01` | Provision from the Ubuntu template, run `wazuh-server-setup.sh`, then enroll endpoints with `wazuh-agent-install.sh` |
-| `KALI01` | Build only after network isolation is documented; no automation is included until the scope is approved |
+| `KALI01` | Isolated attacker-simulation VM on internal-only `vmbr1`; see `docs/kali-validation-runbook.md` |
 
 Example `ADMIN01` sequence:
 

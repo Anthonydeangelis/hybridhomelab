@@ -17,7 +17,7 @@ Core services run on a private Proxmox network. Selected identities synchronize 
 | Private remote access | Entra Application Proxy + Conditional Access | Published WEB01 access with MFA for approved users |
 | Monitoring | `WAZUH01` | Five active agents and tested custom Windows/Linux detections |
 | Cloud IaC | Azure Terraform | Standalone Azure web VM with HTTPS and Key Vault-backed admin authentication |
-| Security validation | `KALI01` | Planned isolated lab-only validation phase |
+| Security validation | `KALI01` | Isolated lab-only SMB authentication validation detected by Wazuh |
 
 ## Architecture
 
@@ -249,19 +249,40 @@ After authentication as the configured admin user, the protected admin page load
 
 **Related material:** [Azure Terraform README](terraform/README.md), [Terraform configuration](terraform/), [GitHub Actions Terraform workflow](.github/workflows/terraform.yml).
 
-## Planned project phases
+### 10. Controlled security validation — `KALI01`
 
-### Controlled security validation — `KALI01`
+I deployed `KALI01` as a dedicated attacker-simulation VM and placed it on `vmbr1`, an internal-only Proxmox bridge with no physical uplink or default gateway. `FS01` has a second adapter on that same isolated segment. Kali is restricted to the approved FS01 SMB endpoint; its normal-network adapter was removed after setup so it cannot access the wider home or lab network.
 
-The next planned lab phase is an isolated `KALI01` validation VM. Its purpose is to generate safe, authorized activity against only the systems I own so that Wazuh, Windows event logging, and access controls can be validated.
+```text
+KALI01 (isolated vmbr1)
+  -> intentionally incorrect SMB authentication attempts
+  -> FS01 Windows Security Event ID 4625
+  -> FS01 Wazuh agent
+  -> Wazuh custom rule 100120
+```
 
-Before testing, I will document network isolation, approved targets, disposable test accounts, expected results, cleanup actions, and evidence. No public, school, work, shared-home, or otherwise unauthorized systems are in scope.
+I created an unprivileged `AttackLab` OU with five disposable `spray-test-*` accounts from `ADMIN01`. Kali made one deliberately incorrect SMB password attempt per account against FS01. Wazuh captured the source address, account name, network-logon type, and Windows Event ID `4625`; custom rule `100120` correlated the repeated failures into a level-10 alert.
 
-**Related material:** [controlled validation scenarios](docs/attack-scenarios.md).
+<details>
+<summary>KALI01 validation evidence</summary>
+
+The `AttackLab` OU contains only disposable validation identities and no resource, administrative, or Entra-sync group memberships.
+
+![Disposable AttackLab identity inventory](evidence/kali/01-disposable-attack-accounts.png)
+
+The Wazuh alert shows the repeated-failed-logon correlation on FS01. Its event details identify `spray-test-04`, source `172.30.30.20`, logon type `3`, and Windows Security Event ID `4625`.
+
+![FS01 Wazuh failed-logon correlation alert](evidence/kali/02-fs01-wazuh-correlation-alert.png)
+
+</details>
+
+The Wazuh correlation rule fires again for subsequent matching events during its 120-second threshold window, so multiple `100120` alerts for one short test burst are expected with the current configuration.
+
+**Related material:** [KALI01 validation runbook](docs/kali-validation-runbook.md), [controlled validation scenarios](docs/attack-scenarios.md), [attack-account script](scripts/kali-attacklab-accounts.ps1), and [custom Wazuh rules](wazuh/custom-rules/local_rules.xml).
 
 ## Evidence and screenshots
 
-The screenshots used above are stored in the matching [`evidence/`](evidence/) folders. They record controlled tests performed with lab-only accounts. The current evidence covers Active Directory, DNS, Entra Connect synchronization, Application Proxy, MFA validation, and the five custom Wazuh rules.
+The screenshots used above are stored in the matching [`evidence/`](evidence/) folders. They record controlled tests performed with lab-only accounts. The current evidence covers Active Directory, DNS, Entra Connect synchronization, Application Proxy, MFA validation, custom Wazuh rules, and the isolated Kali-to-FS01 validation.
 
 | Folder | Contents |
 | --- | --- |
@@ -271,6 +292,7 @@ The screenshots used above are stored in the matching [`evidence/`](evidence/) f
 | [`evidence/conditional-access/`](evidence/conditional-access/) | Microsoft Authenticator step from the validation flow |
 | [`evidence/web01/`](evidence/web01/) | Internal page, HTTP response, and DNS-resolution evidence |
 | [`evidence/wazuh/`](evidence/wazuh/) | Agent overview and custom-rule alerts |
+| [`evidence/kali/`](evidence/kali/) | Disposable test-account inventory and Kali-attributed FS01 failed-logon correlation evidence |
 | [`evidence/azure/`](evidence/azure/) | Terraform, DNS, HTTPS, Key Vault, and protected-admin evidence |
 
 ## Security decisions and scope
@@ -301,13 +323,14 @@ The screenshots used above are stored in the matching [`evidence/`](evidence/) f
 - [Entra Connect runbook](docs/entra-connect-runbook.md)
 - [Application-access design](docs/application-access.md)
 - [Network design](docs/network-design.md)
+- [KALI01 validation runbook](docs/kali-validation-runbook.md)
 - [Operations runbook](docs/operations-runbook.md)
 - [Troubleshooting notes](docs/troubleshooting.md)
 
 ## Future improvements
 
 - Consider automated Key Vault secret refresh if a future lab phase needs password rotation.
-- Build and isolate `KALI01`, then run approved detection-validation exercises.
+- Add a firewall/router VM if a future phase needs tightly controlled inter-segment routing rather than the current direct isolated test bridge.
 - Add a second Application Proxy connector for high availability.
 - Add backup and restore testing for critical services.
 - Continue expanding Wazuh detections and dashboard views.

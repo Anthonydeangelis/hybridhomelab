@@ -14,6 +14,7 @@ This document records the design choices behind the hybrid identity and security
 | Entra Application Proxy publishes `WEB01` | Provides identity-aware, outbound-connector access for approved remote users. |
 | Conditional Access protects the published app | Demonstrates cloud-side access policy and MFA for the assigned application users. |
 | Wazuh centralizes monitoring | Provides a single place to observe Windows and Linux events and validate tuned detections. |
+| `KALI01` uses an internal-only Proxmox bridge | Keeps attacker simulation off the normal network while allowing a narrowly scoped FS01 SMB validation path. |
 
 ## Network and identity boundary
 
@@ -42,6 +43,6 @@ The following are intentionally outside the active design:
 - Public exposure of AD, SMB, RDP, Proxmox, Wazuh, or management interfaces
 - Unscoped testing from `KALI01`
 
-## Next planned addition
+## Current validation status
 
-The standalone Azure Terraform workload is complete and documented with redacted evidence. `KALI01` remains the next planned phase and will be added only with documented network isolation, a lab-only scope, clear cleanup steps, and redacted evidence.
+The standalone Azure Terraform workload and the first `KALI01` validation are complete. Kali is restricted to an internal-only bridge and uses disposable accounts to create controlled failed SMB logons on FS01. The test is documented with a lab-only scope, cleanup guidance, and Wazuh correlation evidence in the [KALI01 validation runbook](kali-validation-runbook.md).
