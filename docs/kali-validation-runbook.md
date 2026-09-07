@@ -56,14 +56,6 @@ Passing the file to `-u` makes NetExec try each username in the list. The value 
 4. In Wazuh, filter for `rule.id:100120 AND agent.name:FS01`.
 5. Confirm the correlated alert contains the underlying Windows Security Event ID `4625`, the disposable username, and source address `172.30.30.20`.
 
-## First NetExec run
-
-This was my first run from Kali. NetExec found `FS01`, but each attempt timed out before authentication completed:
-
-![NetExec reading the disposable account list and reporting NetBIOS timeouts](../evidence/kali/03-netexec-test-users-timeout.png)
-
-The timeouts did not create the failed-logon events I needed. I checked the isolated adapter, the port 445 firewall rule, and SMB on `FS01`, then ran the command again. The later run generated the `4625` events shown in the Wazuh evidence below.
-
 ## Result
 
 The test generated failed network logons on `FS01` (Windows Event ID `4625`). The `FS01` Wazuh agent forwarded those events, and custom rule `100120` correlated the repeated failures into a level-10 alert. The event details identify `spray-test-04` and source address `172.30.30.20`, tying the detected activity to Kali.

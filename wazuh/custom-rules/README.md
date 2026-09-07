@@ -1,8 +1,8 @@
 # Custom Rules
 
-`local_rules.xml` contains the current tested Wazuh rules from `WAZUH01`. The rules were tested one at a time and are retained here as the publishable configuration reference.
+`local_rules.xml` is the copy of the custom rules I used on `WAZUH01`. I tested them one at a time so I could tie each alert to a known action.
 
-The first validated custom detections focus on Active Directory activity from `DC01`:
+The Active Directory rules cover two changes I wanted to see clearly in the dashboard:
 
 - `100101` - new AD user account created
 - `100100` - AD group membership changed
@@ -29,7 +29,7 @@ sudo systemctl status wazuh-manager --no-pager
 
 Keep these rule IDs in the local/custom range and avoid duplicating IDs.
 
-## Issue Encountered: AD User Rule Did Not Match
+## Fixing the AD user rule
 
 While testing Active Directory detections, the test account creation event appeared in Wazuh, but it matched the built-in Wazuh rule instead of the custom rule. The alert showed:
 
@@ -59,25 +59,26 @@ The working description also uses the Wazuh rule field context:
 
 After saving the corrected XML and restarting `wazuh-manager`, creating the `wazuh.test` account produced the expected custom alert.
 
-## Validated Rule Pack
+## Validated rules
 
-The goal is one easy-to-trigger detection per major system:
+The current rule set covers:
 
-- `DC01` - AD account disabled
+- `DC01` - AD user creation and group membership changes
 - `SYNC01` - Entra Connect / ADSync service stopped
 - `FS01` - repeated failed Windows logons
 - `WEB01` - sudo command used
 
-## Test Order
+## Test order
 
-Use this order so each screenshot tells a clean story:
+I tested the rules in this order:
 
 | Order | Rule ID | System | Test action |
 | --- | --- | --- | --- |
-| 1 | `100102` | `DC01` | Disable the `wazuh.test` account. |
-| 2 | `100110` | `SYNC01` | Stop the Entra Connect / ADSync service, then start it again. |
-| 3 | `100120` | `FS01` | Attempt five bad Windows logons within two minutes. |
-| 4 | `100200` | `WEB01` | Run a harmless sudo command, such as `sudo whoami`. |
+| 1 | `100101` | `DC01` | Create the disposable `wazuh.test` account. |
+| 2 | `100100` | `DC01` | Add the test account to a non-privileged test group, then remove it. |
+| 3 | `100110` | `SYNC01` | Stop the Entra Connect / ADSync service, then start it again. |
+| 4 | `100120` | `FS01` | Attempt five bad Windows logons within two minutes. |
+| 5 | `100200` | `WEB01` | Run a harmless sudo command, such as `sudo whoami`. |
 
 After each test, search the dashboard for the custom rule ID and capture a redacted screenshot showing:
 

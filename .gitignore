@@ -5,7 +5,6 @@
 *.secret.*
 .env
 .terraform/
-.terraform.lock.hcl
 
 # Editor and operating-system files
 .DS_Store

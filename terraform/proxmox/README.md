@@ -14,7 +14,7 @@ It does **not** manage `DC01`, `SYNC01`, or `ADMIN01`. Keep those identity-criti
 2. Create an Ubuntu Server Cloud-Init template with the QEMU Guest Agent installed and running.
 3. Create a Proxmox API token.
 4. Note your Proxmox endpoint, node name, storage name, bridge name, and both template VM IDs.
-5. Ensure your local Device SSH agent has a key authorized on the Proxmox host, if the provider needs SSH for clone operations.
+5. Ensure your local SSH agent has a key authorized on the Proxmox host, if the provider needs SSH for clone operations.
 
 ## Configure locally
 

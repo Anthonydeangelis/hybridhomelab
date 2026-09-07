@@ -1,6 +1,6 @@
 # Architecture Decisions
 
-This document records the design choices behind the hybrid identity and security homelab. The goal is to show a realistic small-enterprise pattern while keeping the environment safe, affordable, and easy to explain.
+I kept the design close to a small business environment, but made a few deliberate cuts to keep the lab affordable and safely contained.
 
 ## Active design
 

@@ -4,6 +4,9 @@ output "resource_group_name" {
 output "web_public_ip" {
   value = module.networking.web_public_ip_address
 }
+output "web_public_fqdn" {
+  value = module.networking.web_public_fqdn
+}
 output "web_vm_name" {
   value = module.compute.vm_name
 }

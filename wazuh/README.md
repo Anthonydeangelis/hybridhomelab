@@ -1,8 +1,8 @@
 # Wazuh Monitoring and Custom Detections
 
-`WAZUH01` is the monitoring platform for the Windows and Linux systems in this lab. The focus is not merely installing an agent; it is validating that useful events reach the dashboard and that targeted custom rules fire for real lab activity.
+`WAZUH01` collects events from the Windows and Linux systems in the lab. I tested each custom rule with a specific action on the matching endpoint and saved the results in the main README.
 
-## What this area demonstrates
+## Coverage
 
 - Centralized endpoint monitoring for the lab
 - Windows Active Directory event monitoring from `DC01`
@@ -17,4 +17,3 @@
 | --- | --- |
 | [`custom-rules/local_rules.xml`](custom-rules/local_rules.xml) | Tested custom rules currently used on `WAZUH01` |
 | [`custom-rules/README.md`](custom-rules/README.md) | Rule logic, test order, troubleshooting notes, and evidence guidance |
-

@@ -16,6 +16,9 @@ variable "vnet_cidr" {
 variable "web_subnet_cidr" {
   type = string
 }
+variable "web_dns_label" {
+  type = string
+}
 variable "tags" {
   type = map(string)
 }
@@ -39,6 +42,7 @@ resource "azurerm_public_ip" "web" {
   location            = var.location
   allocation_method   = "Static"
   sku                 = "Standard"
+  domain_name_label   = var.web_dns_label
   tags                = var.tags
 }
 output "web_subnet_id" {
@@ -49,4 +53,7 @@ output "web_public_ip_id" {
 }
 output "web_public_ip_address" {
   value = azurerm_public_ip.web.ip_address
+}
+output "web_public_fqdn" {
+  value = azurerm_public_ip.web.fqdn
 }

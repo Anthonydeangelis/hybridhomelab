@@ -9,6 +9,8 @@ This configuration deploys the standalone Azure infrastructure for the project:
 
 It does **not** create a VPN, Azure domain controller, or route to the private Proxmox lab. The Azure workload is intentionally independent from the Entra Application Proxy path used to publish the internal `WEB01` application.
 
+The Storage Account is a separate configuration example rather than a dependency of the web VM. It enforces TLS 1.2 and blocks anonymous nested-item access; the application itself does not store content there.
+
 ## Deploy
 
 ```bash

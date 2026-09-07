@@ -1,15 +1,15 @@
 # Hybrid Identity and Security Homelab
 
-An enterprise-style homelab that demonstrates how on-premises Active Directory, Microsoft Entra ID, private application access, Windows and Linux administration, centralized monitoring, and infrastructure as code fit together.
+I built this homelab to connect the pieces I had been learning separately: Active Directory, Microsoft Entra ID, private application access, Windows and Linux administration, Wazuh, and Terraform.
 
-Core services run on a private Proxmox network. Selected identities synchronize to Microsoft Entra ID, approved users reach an internal application through Entra Application Proxy, and Windows and Linux events are collected and tested with Wazuh.
+The core services run on a private Proxmox network. Selected identities sync to Entra ID, approved users reach an internal application through Entra Application Proxy, and Wazuh collects events from both Windows and Linux systems.
 
 ## Project at a glance
 
 | Area | Technology / system | Demonstrated result |
 | --- | --- | --- |
 | Virtualization | Proxmox | Hosts the private lab environment and its service VMs |
-| Core identity | `DC01` / `WIN-DC01` | Active Directory Domain Services, DNS, OUs, users, and groups for `corp.local` |
+| Core identity | `DC01` (hostname `WIN-DC01`) | Active Directory Domain Services, DNS, OUs, users, and groups for `corp.local` |
 | Administration | `ADMIN01` | RSAT-based Active Directory administration workstation |
 | Hybrid identity | `SYNC01` | Microsoft Entra Connect Sync with scoped lab identities |
 | File services | `FS01` | SMB file-server role with AD-backed access controls |
@@ -70,7 +70,7 @@ The PowerShell inventory shows the lab's AD user objects, including the synchron
 
 </details>
 
-**Related material:** [AD design](docs/active-directory.md), [AD bootstrap script](scripts/ad-bootstrap.ps1), [AD configuration script](scripts/ad-setup.ps1).
+**Related material:** [AD design](docs/active-directory.md), [AD bootstrap script](scripts/ad-bootstrap.ps1), [sample-user script](scripts/ad-lab-users.ps1).
 
 ### 3. Administrative workstation — `ADMIN01`
 
@@ -202,7 +202,7 @@ One troubleshooting lesson was especially useful: Wazuh dashboard alerts show fi
 
 I deployed a standalone Azure workload with a resource group, VNet, subnet, NSG, public IP, Ubuntu web VM, Storage Account, and Key Vault. It is intentionally separate from the private Proxmox lab.
 
-The Azure web VM is available at `https://hybridhomelabweb.eastus2.cloudapp.azure.com`. Nginx uses a Let's Encrypt certificate and redirects HTTP to HTTPS. Its `/admin/` page is protected with Nginx Basic Authentication using a bcrypt hash manually retrieved from Azure Key Vault by the VM's system-assigned managed identity.
+For validation, I assigned the Azure VM the hostname `hybridhomelabweb.eastus2.cloudapp.azure.com`. Nginx used a Let's Encrypt certificate and redirected HTTP to HTTPS. Its `/admin/` page was protected with Nginx Basic Authentication using a bcrypt hash manually retrieved from Azure Key Vault by the VM's system-assigned managed identity. The VM is not kept online continuously after the evidence is captured.
 
 ```text
 Azure Key Vault → Azure VM managed identity → local Nginx password-hash file → /admin/ authentication
@@ -313,7 +313,6 @@ The screenshots used above are stored in the matching [`evidence/`](evidence/) f
 | [`terraform/`](terraform/) | Azure workload and Proxmox VM-lifecycle Terraform configurations |
 | [`wazuh/`](wazuh/) | Custom detection rules and rule-testing notes |
 | [`evidence/`](evidence/) | Screenshots from controlled lab validation |
-| [`policies/`](policies/) | Azure Policy notes |
 | [`.github/workflows/`](.github/workflows/) | Terraform validation workflow |
 
 ## Supporting documentation
@@ -329,8 +328,8 @@ The screenshots used above are stored in the matching [`evidence/`](evidence/) f
 
 ## Future improvements
 
-- Consider automated Key Vault secret refresh if a future lab phase needs password rotation.
-- Add a firewall/router VM if a future phase needs tightly controlled inter-segment routing rather than the current direct isolated test bridge.
+- Automate the Key Vault secret refresh so password rotation does not require a manual pull on the VM.
+- Add a firewall/router VM for controlled routing between lab segments.
 - Add a second Application Proxy connector for high availability.
 - Add backup and restore testing for critical services.
 - Continue expanding Wazuh detections and dashboard views.

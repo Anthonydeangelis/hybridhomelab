@@ -12,6 +12,7 @@ module "networking" {
   environment         = var.environment
   vnet_cidr           = var.vnet_cidr
   web_subnet_cidr     = var.web_subnet_cidr
+  web_dns_label       = var.web_dns_label
   tags                = local.tags
 }
 

@@ -2,7 +2,6 @@
 param(
     [string]$DomainName = 'corp.local',
     [string]$DomainNetbiosName = 'CORP',
-    [Parameter(Mandatory)]
     [string]$DnsServerAddress,
     [string]$InterfaceAlias = 'Ethernet',
     [switch]$ConfigureDns,
@@ -24,6 +23,9 @@ if (-not (Test-IsAdministrator)) {
 }
 
 if ($ConfigureDns) {
+    if (-not $DnsServerAddress) {
+        throw '-DnsServerAddress is required with -ConfigureDns.'
+    }
     Write-Host "Configuring $InterfaceAlias to use AD DNS $DnsServerAddress..."
     Set-DnsClientServerAddress -InterfaceAlias $InterfaceAlias -ServerAddresses $DnsServerAddress
     Resolve-DnsName $DomainName | Out-Host

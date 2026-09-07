@@ -54,7 +54,7 @@ variable "ssh_public_key" {
 
 variable "fs01_vmid" {
   type        = number
-  description = "Unused VM ID reserved for FS01."
+  description = "Available VM ID to assign to FS01."
 }
 
 variable "ubuntu_servers" {

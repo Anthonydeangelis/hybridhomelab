@@ -9,6 +9,7 @@ on:
     branches: [main]
     paths:
       - 'terraform/**'
+      - '.github/workflows/terraform.yml'
 
 permissions:
   contents: read
@@ -16,9 +17,14 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory:
+          - terraform
+          - terraform/proxmox
     defaults:
       run:
-        working-directory: terraform
+        working-directory: ${{ matrix.directory }}
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3

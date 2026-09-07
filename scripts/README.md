@@ -1,11 +1,11 @@
 # Scripts
 
-Scripts are starting points for the lab, not unattended production automation. Read each script, use a disposable lab environment, and supply secrets interactively or through secure local tooling.
+These scripts cover the repeatable parts of the lab build. Passwords are prompted for at runtime, and environment-specific values are passed as parameters.
 
 | Script | Purpose |
 | --- | --- |
-| `ad-setup.ps1` | Claude-compatible AD workflow: promotion notes, OUs, AGDLP groups, and UPN setup |
-| `ad-bootstrap.ps1` | Parameterized alternative for new AD builds |
+| `ad-bootstrap.ps1` | Promote `DC01`, then create the lab OUs and AGDLP groups |
+| `ad-lab-users.ps1` | Create the five sample department users and add their global-group memberships |
 | `admin01-setup.ps1` | Configure AD DNS, join `ADMIN01` to `corp.local`, install RSAT, and verify management readiness |
 | `set-lab-upn.ps1` | Add an alternate UPN suffix and update selected lab users |
 | `file-server-setup.ps1` | Create SMB shares and apply AGDLP-based NTFS permissions |
@@ -17,7 +17,7 @@ Scripts are starting points for the lab, not unattended production automation. R
 
 | VM | Build path |
 | --- | --- |
-| `DC01` | Install Windows Server, promote AD DS/DNS, then run `ad-setup.ps1` or `ad-bootstrap.ps1` |
+| `DC01` | Install Windows Server, run both phases of `ad-bootstrap.ps1`, then run `ad-lab-users.ps1` |
 | `ADMIN01` | Install Windows 11 Pro, then run `admin01-setup.ps1` in staged passes |
 | `SYNC01` | Install Windows Server, join the domain, then follow `docs/entra-connect-runbook.md` |
 | `FS01` | Provision from a clean Windows Server template, join the domain, then run `file-server-setup.ps1` |
@@ -25,7 +25,17 @@ Scripts are starting points for the lab, not unattended production automation. R
 | `WAZUH01` | Provision from the Ubuntu template, run `wazuh-server-setup.sh`, then enroll endpoints with `wazuh-agent-install.sh` |
 | `KALI01` | Isolated attacker-simulation VM on internal-only `vmbr1`; see `docs/kali-validation-runbook.md` |
 
-Example `ADMIN01` sequence:
+## Example runs
+
+On `DC01`, promotion restarts the server. After the restart, sign back in and run the configuration and user steps:
+
+```powershell
+.\ad-bootstrap.ps1 -Phase Promote
+.\ad-bootstrap.ps1 -Phase Configure
+.\ad-lab-users.ps1
+```
+
+On `ADMIN01`:
 
 ```powershell
 .\admin01-setup.ps1 -DnsServerAddress 192.168.1.10 -ConfigureDns -Verify

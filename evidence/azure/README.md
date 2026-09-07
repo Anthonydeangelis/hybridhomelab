@@ -1,6 +1,6 @@
 # Azure web workload evidence
 
-Add reviewed and redacted screenshots to this folder using these names:
+These are the reviewed screenshots used in the Azure section of the main README:
 
 | File | Evidence captured | Redaction reminder |
 | --- | --- | --- |

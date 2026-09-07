@@ -2,13 +2,14 @@
 
 `DC01` is the on-premises identity foundation for the `corp.local` lab domain. It provides Active Directory Domain Services (AD DS), AD-integrated DNS, organizational units, lab identities, and group-based access control.
 
-## Design goals
+## Layout
 
-- Keep local identities and access control centralized in Active Directory.
-- Use organizational units to separate servers, users, groups, and sync-scoped lab identities.
-- Use security groups rather than assigning access directly to individual users.
-- Administer the domain through `ADMIN01` with RSAT for routine tasks.
-- Synchronize only selected lab identities to Microsoft Entra ID through `SYNC01`.
+| OU | Contents |
+| --- | --- |
+| `IT`, `HR`, `Finance`, `Sales` | Department users and global security groups |
+| `LabSync` | Disposable identities and the group synchronized for Application Proxy access |
+
+I use `ADMIN01` and RSAT for normal directory work instead of signing in to the domain controller. `SYNC01` runs Entra Connect, with OU filtering limited to `LabSync`.
 
 ## Access model
 
@@ -20,12 +21,4 @@ Accounts → Global groups → Domain local groups → Permissions
 
 This keeps user membership separate from resource permissions. For example, a user is added to the relevant role-based global group, and the file-share permission is assigned to the domain local group associated with that resource.
 
-## Evidence to publish
-
-- Redacted AD Users and Computers view showing the OU structure.
-- Redacted example of group membership supporting AGDLP.
-- `dcdiag` or DNS health-check output.
-- RSAT administration view from `ADMIN01`.
-- A synced disposable lab identity in Microsoft Entra ID, if appropriate.
-
-Do not publish real user details, passwords, recovery information, domain-controller IP addresses, or management paths.
+The [main README](../README.md#2-active-directory-and-dns--dc01) includes the OU layout, user inventory, and service-health evidence.
