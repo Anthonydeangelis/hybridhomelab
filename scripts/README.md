@@ -35,3 +35,19 @@ Example `ADMIN01` sequence:
 ```
 
 Replace `192.168.1.10` with the real `DC01` address from your private lab notes. Do not commit private IP evidence unless it is intentionally redacted.
+
+## KALI01 test accounts
+
+I ran this from an elevated PowerShell window on `ADMIN01`:
+
+```powershell
+.\kali-attacklab-accounts.ps1
+```
+
+It asks for a password and creates five accounts named `spray-test-01` through `spray-test-05` in the `AttackLab` OU. I copied those usernames into `test-users.txt` on Kali, one per line, then ran:
+
+```bash
+nxc smb 172.30.30.10 -d Corp -u test-users.txt -p 'defthewrongpw!'
+```
+
+NetExec reads the usernames from the file and tries the password after `-p` against each one. The [Kali validation runbook](../docs/kali-validation-runbook.md) has the full test and the Wazuh results.

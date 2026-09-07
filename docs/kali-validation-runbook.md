@@ -31,6 +31,18 @@ spray-test-05
 
 The accounts are deliberately not members of departmental, administrative, file-access, or Entra-sync groups.
 
+On Kali, I put the five usernames in `test-users.txt`, one per line:
+
+```text
+spray-test-01
+spray-test-02
+spray-test-03
+spray-test-04
+spray-test-05
+```
+
+Passing the file to `-u` makes NetExec try each username in the list. The value after `-p` is the wrong password I used for all five attempts.
+
 ## Validation procedure
 
 1. Confirm Kali can reach only the approved test endpoint: `nc -vz 172.30.30.10 445`.
@@ -38,11 +50,19 @@ The accounts are deliberately not members of departmental, administrative, file-
 3. Run one intentionally incorrect SMB password attempt per listed account:
 
    ```bash
-   nxc smb 172.30.30.10 -d CORP -u test-users.txt -p '<intentionally-wrong-password>'
+   nxc smb 172.30.30.10 -d Corp -u test-users.txt -p 'defthewrongpw!'
    ```
 
 4. In Wazuh, filter for `rule.id:100120 AND agent.name:FS01`.
 5. Confirm the correlated alert contains the underlying Windows Security Event ID `4625`, the disposable username, and source address `172.30.30.20`.
+
+## First NetExec run
+
+This was my first run from Kali. NetExec found `FS01`, but each attempt timed out before authentication completed:
+
+![NetExec reading the disposable account list and reporting NetBIOS timeouts](../evidence/kali/03-netexec-test-users-timeout.png)
+
+The timeouts did not create the failed-logon events I needed. I checked the isolated adapter, the port 445 firewall rule, and SMB on `FS01`, then ran the command again. The later run generated the `4625` events shown in the Wazuh evidence below.
 
 ## Result
 
