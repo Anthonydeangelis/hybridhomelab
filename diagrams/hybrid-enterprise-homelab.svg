@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980" role="img" aria-labelledby="title description">
   <title id="title">Hybrid Identity and Security Homelab Architecture</title>
-  <desc id="description">A private Proxmox homelab runs Active Directory, administration, file, web, monitoring, and isolated testing systems. Selected identities synchronize to Microsoft Entra ID, and an outbound Application Proxy connector publishes the internal web application. A separate Terraform-managed Azure workload has no private route to the homelab.</desc>
+  <desc id="description">A private Proxmox homelab runs Active Directory, administration, file, web, monitoring, remote-access, and isolated testing systems. Selected identities synchronize to Microsoft Entra ID, an outbound Application Proxy connector publishes the internal web application, and a dedicated Tailscale subnet router provides narrowly routed Proxmox administration. A separate Terraform-managed Azure workload has no private route to the homelab.</desc>
 
   <defs>
     <linearGradient id="canvas" x1="0" y1="0" x2="1" y2="1">
@@ -48,7 +48,7 @@
   <circle cx="100" cy="980" r="340" fill="#123353" opacity="0.14"/>
 
   <text x="58" y="58" class="title">Hybrid Identity &amp; Security Homelab</text>
-  <text x="58" y="88" class="subtitle">Private Proxmox services · Microsoft Entra integration · standalone Azure infrastructure</text>
+  <text x="58" y="88" class="subtitle">Private Proxmox services · narrow Tailscale administration · Microsoft Entra integration · standalone Azure infrastructure</text>
 
   <g transform="translate(902 66)">
     <line x1="0" y1="0" x2="24" y2="0" class="cyan flow"/>
@@ -173,12 +173,18 @@
   <text x="506" y="722" class="card-meta">TEST HOST</text>
   <text x="452" y="753" class="card-detail">Disposable AttackLab users</text>
   <text x="452" y="774" class="card-detail">Controlled SMB validation</text>
-  <text x="452" y="795" class="card-detail">No route to normal LAN</text>
+  <text x="452" y="795" class="card-detail">vmbr1 · no route to normal LAN</text>
 
-  <text x="750" y="698" class="section">ISOLATED TEST SEGMENT</text>
-  <text x="750" y="735" class="card-title">vmbr1 · 172.30.30.0/24</text>
-  <text x="750" y="764" class="card-detail">No gateway or physical uplink</text>
-  <text x="750" y="787" class="card-detail">TCP 445: KALI01 → FS01 only</text>
+  <rect x="746" y="684" width="38" height="38" rx="9" fill="#075985"/><text x="765" y="708" class="icon-text">TS</text>
+  <text x="800" y="702" class="card-title">TS01</text>
+  <text x="800" y="722" class="card-meta">SUBNET ROUTER</text>
+  <text x="746" y="753" class="card-detail">Ubuntu · Tailscale</text>
+  <text x="746" y="774" class="card-detail">Approved Proxmox /32 route</text>
+  <text x="746" y="795" class="card-detail">No exit node · no Kali route</text>
+
+  <rect x="724" y="838" width="270" height="48" rx="10" fill="#13283d" stroke="#2b5878"/>
+  <text x="859" y="857" class="card-meta" text-anchor="middle">REMOTE ADMINISTRATION</text>
+  <text x="859" y="877" class="card-detail" text-anchor="middle">Authorized Mac → Tailscale → TS01</text>
 
   <!-- Microsoft Entra zone -->
   <rect x="1064" y="126" width="480" height="356" rx="24" fill="#151a34" stroke="#393761" stroke-width="1.5"/>

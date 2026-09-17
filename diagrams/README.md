@@ -5,4 +5,6 @@
 - `SYNC01` synchronizes selected lab identities to Microsoft Entra ID.
 - The private Application Proxy connector reaches internal `WEB01` through an outbound-only connection.
 - The Azure web workload is standalone; its web VM uses Key Vault for the protected admin-page password hash.
+- `TS01` provides an encrypted Tailscale path from an authorized Mac to one approved Proxmox `/32` route.
+- `TS01` is not an exit node and does not advertise the isolated Kali segment.
 - No private Azure-to-home network path, Azure domain controller, or Active Directory replication path exists.

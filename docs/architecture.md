@@ -15,6 +15,7 @@ I kept the design close to a small business environment, but made a few delibera
 | Conditional Access protects the published app | Demonstrates cloud-side access policy and MFA for the assigned application users. |
 | Wazuh centralizes monitoring | Provides a single place to observe Windows and Linux events and validate tuned detections. |
 | `KALI01` uses an internal-only Proxmox bridge | Keeps attacker simulation off the normal network while allowing a narrowly scoped FS01 SMB validation path. |
+| `TS01` provides Tailscale subnet routing | Gives an authorized Mac an encrypted path to an explicitly approved Proxmox host route without exposing the management interface to the public internet. |
 
 ## Network and identity boundary
 
@@ -31,7 +32,11 @@ DC01 / FS01 / WEB01                Synced lab identities              Terraform-
 SYNC01  ---------------------------->       |             No private route or AD replication
                                             |
 Remote user --> Entra sign-in --> App Proxy connector --> internal WEB01
+
+Authorized Mac --> encrypted Tailscale tunnel --> TS01 --> approved Proxmox /32 route
 ```
+
+`TS01` is a dedicated Ubuntu VM on the normal private network. Linux IP forwarding is enabled, but Tailscale advertises only the approved Proxmox host as a `/32`; it does not advertise the complete home network or the isolated `172.30.30.0/24` Kali segment. Exit-node functionality is disabled, so ordinary internet traffic does not traverse the lab.
 
 ## Explicit non-goals
 
@@ -42,7 +47,8 @@ The following are intentionally outside the active design:
 - Direct inbound internet exposure of `WEB01`
 - Public exposure of AD, SMB, RDP, Proxmox, Wazuh, or management interfaces
 - Unscoped testing from `KALI01`
+- Tailscale exit-node service or Tailscale access to the isolated Kali segment
 
 ## Current validation status
 
-The standalone Azure Terraform workload and the first `KALI01` validation are complete. Kali is restricted to an internal-only bridge and uses disposable accounts to create controlled failed SMB logons on FS01. The test is documented with a lab-only scope, cleanup guidance, and Wazuh correlation evidence in the [KALI01 validation runbook](kali-validation-runbook.md).
+The standalone Azure Terraform workload, the first `KALI01` validation, and the `TS01` subnet-router deployment are complete. Kali is restricted to an internal-only bridge and uses disposable accounts to create controlled failed SMB logons on FS01. The test is documented with a lab-only scope, cleanup guidance, and Wazuh correlation evidence in the [KALI01 validation runbook](kali-validation-runbook.md). Tailscale validation confirms that `tailscaled` is enabled and running and that the redacted single-host route is approved while exit-node routing remains disabled.
