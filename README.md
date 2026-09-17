@@ -18,6 +18,7 @@ The core services run on a private Proxmox network. Selected identities sync to 
 | Monitoring | `WAZUH01` | Five active agents and tested custom Windows/Linux detections |
 | Cloud IaC | Azure Terraform | Standalone Azure web VM with HTTPS and Key Vault-backed admin authentication |
 | Security validation | `KALI01` | Isolated lab-only SMB authentication validation detected by Wazuh |
+| Remote administration | `TS01` + Tailscale | Encrypted, narrowly routed access to the private Proxmox management interface |
 
 ## Architecture
 
@@ -280,9 +281,51 @@ The Wazuh correlation rule fires again for subsequent matching events during its
 
 **Related material:** [KALI01 validation runbook](docs/kali-validation-runbook.md), [controlled validation scenarios](docs/attack-scenarios.md), [attack-account script](scripts/kali-attacklab-accounts.ps1), and [custom Wazuh rules](wazuh/custom-rules/local_rules.xml).
 
+### 11. Private remote administration — `TS01`
+
+I deployed `TS01` as a dedicated Ubuntu Tailscale subnet router on Proxmox. It provides an encrypted path from an authorized Tailscale client to the private Proxmox management interface without publishing TCP `8006` or another inbound management port to the internet.
+
+```text
+Authorized Mac
+  -> encrypted Tailscale connection
+  -> TS01 subnet router
+  -> approved Proxmox host route
+  -> private Proxmox web interface on TCP 8006
+```
+
+I installed and authenticated Tailscale on `TS01`, enabled persistent Linux packet forwarding, and advertised only the Proxmox host as a `/32` route rather than exposing the entire home subnet:
+
+```bash
+curl -fsSL https://tailscale.com/install.sh | sh
+sudo tailscale up
+
+printf '%s\n' \
+  'net.ipv4.ip_forward = 1' \
+  'net.ipv6.conf.all.forwarding = 1' |
+  sudo tee /etc/sysctl.d/99-tailscale.conf
+
+sudo sysctl -p /etc/sysctl.d/99-tailscale.conf
+sudo tailscale set --advertise-routes=<PROXMOX-IP>/32
+```
+
+The route was then explicitly approved in the Tailscale administration console. `TS01` is not configured as an exit node, so ordinary internet traffic is not routed through the lab. The isolated `KALI01` test segment is not advertised.
+
+<details>
+<summary>Tailscale subnet-router evidence</summary>
+
+The `tailscaled` service is enabled and running on `TS01`.
+
+![Tailscale service running on TS01](evidence/tailscale/01-tailscaled-service-running.png)
+
+The redacted single-host subnet route is enabled for `TS01`, while exit-node functionality remains disabled.
+
+![Approved Tailscale subnet route with exit node disabled](evidence/tailscale/02-subnet-route-approved.png)
+
+</details>
+
 ## Evidence and screenshots
 
-The screenshots used above are stored in the matching [`evidence/`](evidence/) folders. They record controlled tests performed with lab-only accounts. The current evidence covers Active Directory, DNS, Entra Connect synchronization, Application Proxy, MFA validation, custom Wazuh rules, and the isolated Kali-to-FS01 validation.
+The screenshots used above are stored in the matching [`evidence/`](evidence/) folders. They record controlled tests performed with lab-only accounts. The current evidence covers Active Directory, DNS, Entra Connect synchronization, Application Proxy, MFA validation, custom Wazuh rules, the isolated Kali-to-FS01 validation, and the Tailscale subnet router.
 
 | Folder | Contents |
 | --- | --- |
@@ -294,6 +337,7 @@ The screenshots used above are stored in the matching [`evidence/`](evidence/) f
 | [`evidence/wazuh/`](evidence/wazuh/) | Agent overview and custom-rule alerts |
 | [`evidence/kali/`](evidence/kali/) | Disposable test-account inventory and Kali-attributed FS01 failed-logon correlation evidence |
 | [`evidence/azure/`](evidence/azure/) | Terraform, DNS, HTTPS, Key Vault, and protected-admin evidence |
+| [`evidence/tailscale/`](evidence/tailscale/) | Running TS01 service and approved, redacted subnet-route evidence |
 
 ## Security decisions and scope
 
@@ -302,6 +346,7 @@ The screenshots used above are stored in the matching [`evidence/`](evidence/) f
 - Wazuh, Proxmox, Active Directory, SMB, RDP, and management interfaces remain private.
 - Secrets are prompted for at runtime or kept in ignored local configuration files; Terraform state and `.tfvars` files are not committed.
 - Controlled validation is limited to isolated, lab-owned systems and disposable test accounts.
+- Tailscale remote administration advertises only approved host routes; TS01 is not an exit node, and the isolated Kali segment is excluded.
 
 ## Repository guide
 
