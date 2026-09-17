@@ -18,3 +18,7 @@ ubuntu_servers = {
   WEB01   = { vmid = 202, cores = 2, memory_mb = 2048, disk_gb = 40, address = "dhcp" }
   WAZUH01 = { vmid = 203, cores = 2, memory_mb = 4096, disk_gb = 80, address = "dhcp" }
 }
+
+tailscalebox = {
+  TS01 = { vmid = 1000000, cores = 1, memory_mb = 2048, disk_gb = 40, address = "192.168.1.*, gateway = "192.168.1.* }
+}
