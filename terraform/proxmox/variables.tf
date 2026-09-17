@@ -67,3 +67,14 @@ variable "ubuntu_servers" {
     address   = string
   }))
 }
+variable "tailscalebox" {
+  description = "tailscale VM"
+  type = map(object({
+    vmid      = number
+    cores     = number
+    memory_mb = number
+    disk_gb   = number
+    address   = string
+    gateway   = string
+  }))
+}
